@@ -2,9 +2,11 @@ import SwiftUI
 
 struct Article: Identifiable, Decodable {
     let id: Int
-    let name: String
-    let price: Int
-//    let image: String
+    let title: String
+//    let image_cover: String
+    let text: String
+    let like_count: Int
+    
 }
 
 class ArticleViewModel: ObservableObject {
@@ -15,7 +17,7 @@ class ArticleViewModel: ObservableObject {
     }
 
     func fetchData() {
-        guard let url = URL(string: "https://8739-5-144-118-1.ngrok-free.app/api/games/") else {
+        guard let url = URL(string: "http://127.0.0.1:8000/api/article_list/") else {
             return
         }
 
@@ -47,9 +49,9 @@ struct ContentView: View {
                     VStack(alignment: .leading) {
                         Text("ID: \(article.id)")
                             .font(.headline)
-                        Text("Text: \(article.name)")
+                        Text("Title: \(article.title)")
                             .font(.subheadline)
-                        Text("Like Count: \(article.price)")
+                        Text("Like Count: \(article.like_count)")
                             .font(.subheadline)
                     }
                 }
@@ -66,9 +68,9 @@ struct ArticleDetail: View {
         VStack {
             Text("ID: \(article.id)")
                 .font(.headline)
-            Text("Text: \(article.name)")
+            Text("Text: \(article.text)")
                 .font(.subheadline)
-            Text("Like Count: \(article.price)")
+            Text("Like Count: \(article.like_count)")
                 .font(.subheadline)
         }
         .navigationBarTitle("Article Detail")
