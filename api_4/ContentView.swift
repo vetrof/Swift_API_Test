@@ -4,7 +4,7 @@ struct Article: Identifiable, Decodable {
     let id: Int
     let name: String
     let price: Int
-    let image: String
+//    let image: String
 }
 
 class ArticleViewModel: ObservableObject {
