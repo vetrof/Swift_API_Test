@@ -38,19 +38,17 @@ class ArticleViewModel: ObservableObject {
         }.resume()
     }
 }
-
+//ListView
 struct ContentView: View {
     @ObservedObject var viewModel = ArticleViewModel()
-
+    
     var body: some View {
         NavigationView {
             List(viewModel.articles) { article in
                 NavigationLink(destination: ArticleDetail(article: article)) {
                     VStack(alignment: .leading) {
-                        Text("ID: \(article.id)")
+                        Text("\(article.id). \(article.title)")
                             .font(.headline)
-                        Text("Text: \(article.title)")
-                            .font(.subheadline)
                         Text("Like Count: \(article.like_count)")
                             .font(.subheadline)
                     }
@@ -60,13 +58,17 @@ struct ContentView: View {
         }
     }
 }
-
+//DetailView
 struct ArticleDetail: View {
     let article: Article
     @State private var imageData: Data? = nil
 
     var body: some View {
         VStack {
+            
+            Text("\(article.title)")
+                .font(.headline)
+            
             if let imageData = imageData, let uiImage = UIImage(data: imageData) {
                 Image(uiImage: uiImage)
                     .resizable()
@@ -78,10 +80,12 @@ struct ArticleDetail: View {
 
             Text("ID: \(article.id)")
                 .font(.headline)
-            Text("Text: \(article.title)")
+            
+            Text("\(article.text)")
                 .font(.subheadline)
-            Text("Like Count: \(article.like_count)")
-                .font(.subheadline)
+            
+            Text("Like Count=\(article.like_count)")
+                .font(.headline)
         }
         .navigationBarTitle("Article Detail")
         .onAppear {
