@@ -49,8 +49,9 @@ struct ContentView: View {
                     VStack(alignment: .leading) {
                         Text("\(article.id). \(article.title)")
                             .font(.headline)
-                        Text("Like Count: \(article.like_count)")
+                        Text("\(article.like_count) Like")
                             .font(.subheadline)
+                            .foregroundColor(.blue)
                     }
                 }
             }
@@ -65,10 +66,7 @@ struct ArticleDetail: View {
 
     var body: some View {
         VStack {
-            
-            Text("\(article.title)")
-                .font(.headline)
-            
+
             if let imageData = imageData, let uiImage = UIImage(data: imageData) {
                 Image(uiImage: uiImage)
                     .resizable()
@@ -80,14 +78,16 @@ struct ArticleDetail: View {
 
             Text("ID: \(article.id)")
                 .font(.headline)
-            
+
             Text("\(article.text)")
                 .font(.subheadline)
-            
+
             Text("Like Count=\(article.like_count)")
                 .font(.headline)
+
+            Spacer() // Добавленный Spacer для размещения содержимого внизу
         }
-        .navigationBarTitle("Article Detail")
+        .navigationBarTitle("\(article.title)")
         .onAppear {
             loadImage()
         }
@@ -105,6 +105,8 @@ struct ArticleDetail: View {
         }.resume()
     }
 }
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
