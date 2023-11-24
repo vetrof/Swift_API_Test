@@ -43,29 +43,73 @@ class ArticleViewModel: ObservableObject {
     }
 }
 //ListView
+//MARK: - List view variable
 struct ContentView: View {
     @ObservedObject var viewModel = ArticleViewModel()
-    
+
     var body: some View {
         NavigationView {
             List(viewModel.articles) { article in
                 NavigationLink(destination: ArticleDetail(article: article)) {
-                    VStack(alignment: .leading) {
-                        
-                        //MARK: - List view variable
-                        
-                        Text("\(article.id). \(article.title)")
-                            .font(.headline)
-//                        Text("\(article.like_count) Like")
-//                            .font(.subheadline)
-//                            .foregroundColor(.blue)
-                    }
+                    ArticleTile(article: article)
                 }
             }
             .navigationBarTitle("Article List")
         }
     }
 }
+
+
+struct ArticleTile: View {
+    let article: Article
+    @State private var imageData: Data? = nil
+
+    var body: some View {
+        HStack(spacing: 16) {
+            if let imageData = imageData, let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 100, height: 100)
+                    .clipped()
+            } else {
+                Text("Loading Image...")
+                    .frame(width: 200, height: 200)
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("\(article.title)")
+                    .font(.headline)
+
+                Text(article.text.prefix(50) + "...")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                    .lineLimit(10)
+                    .truncationMode(.tail)
+            }
+        }
+        .padding()
+        .onAppear {
+            loadImage()
+        }
+    }
+
+    private func loadImage() {
+        guard let url = URL(string: article.image_cover) else { return }
+
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let data = data {
+                DispatchQueue.main.async {
+                    self.imageData = data
+                }
+            }
+        }.resume()
+    }
+}
+
+
+
+
 //DetailView
 struct ArticleDetail: View {
     let article: Article
