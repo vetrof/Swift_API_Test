@@ -60,6 +60,30 @@ struct ContentView: View {
 }
 
 
+import SwiftUI
+import UIKit
+
+struct HTMLTextView: UIViewRepresentable {
+    var htmlString: String
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.isSelectable = true
+        return textView
+    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        DispatchQueue.main.async {
+            if let attributedString = htmlString.htmlToAttributedString {
+                uiView.attributedText = attributedString
+            } else {
+                uiView.text = htmlString
+            }
+        }
+    }
+}
+
 struct ArticleTile: View {
     let article: Article
     @State private var imageData: Data? = nil
@@ -70,7 +94,7 @@ struct ArticleTile: View {
                 Image(uiImage: uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100)
+                    .frame(width: 100, height: 150)
                     .clipped()
             } else {
                 Text("Loading Image...")
@@ -81,11 +105,10 @@ struct ArticleTile: View {
                 Text("\(article.title)")
                     .font(.headline)
 
-                Text(article.text.prefix(50) + "...")
+                HTMLTextView(htmlString: article.text)
                     .font(.subheadline)
                     .foregroundColor(.gray)
-                    .lineLimit(10)
-                    .truncationMode(.tail)
+                    .frame(maxHeight: .infinity)
             }
         }
         .padding()
@@ -105,7 +128,22 @@ struct ArticleTile: View {
             }
         }.resume()
     }
+
 }
+
+// Метод для конвертации HTML в NSAttributedString
+extension String {
+    var htmlToAttributedString: NSAttributedString? {
+        guard let data = data(using: .utf8) else { return nil }
+        do {
+            return try NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue], documentAttributes: nil)
+        } catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+}
+
 
 
 
@@ -130,8 +168,12 @@ struct ArticleDetail: View {
             //MARK: - Detail view variable
             
             Text("ID: \(article.id)").font(.headline)
-            Text("\(article.text)").font(.subheadline)
-//            Text("Like Count=\(article.like_count)").font(.headline)
+            
+            HTMLTextView(htmlString: article.text)
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .frame(maxHeight: .infinity)
+            
             Spacer() // Добавленный Spacer для размещения содержимого внизу
         }
         .navigationBarTitle("\(article.title)")
