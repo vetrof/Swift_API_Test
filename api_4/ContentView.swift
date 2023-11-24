@@ -1,11 +1,12 @@
 import SwiftUI
 
 struct Article: Identifiable, Decodable {
+    //MARK: - struct
     let id: Int
     let title: String
     let image_cover: String
     let text: String
-    let like_count: Int
+//    let like_count: Int
     
 }
 
@@ -17,6 +18,9 @@ class ArticleViewModel: ObservableObject {
     }
 
     func fetchData() {
+        
+        //MARK: - API URL
+        
         guard let url = URL(string: "http://127.0.0.1:8000/api/article_list/") else {
             return
         }
@@ -47,11 +51,14 @@ struct ContentView: View {
             List(viewModel.articles) { article in
                 NavigationLink(destination: ArticleDetail(article: article)) {
                     VStack(alignment: .leading) {
+                        
+                        //MARK: - List view variable
+                        
                         Text("\(article.id). \(article.title)")
                             .font(.headline)
-                        Text("\(article.like_count) Like")
-                            .font(.subheadline)
-                            .foregroundColor(.blue)
+//                        Text("\(article.like_count) Like")
+//                            .font(.subheadline)
+//                            .foregroundColor(.blue)
                     }
                 }
             }
@@ -75,16 +82,12 @@ struct ArticleDetail: View {
             } else {
                 Text("Loading Image...")
             }
-
-            Text("ID: \(article.id)")
-                .font(.headline)
-
-            Text("\(article.text)")
-                .font(.subheadline)
-
-            Text("Like Count=\(article.like_count)")
-                .font(.headline)
-
+            
+            //MARK: - Detail view variable
+            
+            Text("ID: \(article.id)").font(.headline)
+            Text("\(article.text)").font(.subheadline)
+//            Text("Like Count=\(article.like_count)").font(.headline)
             Spacer() // Добавленный Spacer для размещения содержимого внизу
         }
         .navigationBarTitle("\(article.title)")
